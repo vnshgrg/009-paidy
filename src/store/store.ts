@@ -4,7 +4,7 @@ import { authenticationReducer, todoReducer } from "./slices";
 export const store = configureStore({
   reducer: {
     authentication: authenticationReducer,
-    todo: todoReducer,
+    todos: todoReducer,
   },
 });
 

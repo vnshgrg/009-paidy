@@ -1,7 +1,7 @@
 import { PayloadAction, createSlice, nanoid } from "@reduxjs/toolkit";
 
 export interface Todo {
-  id?: string;
+  id: string;
   isCompleted: boolean;
   title: string;
   createdAt: number;
@@ -22,10 +22,12 @@ export interface DeleteTodoParams {
   id: string;
 }
 
-const initialState: Todo[] = [];
+const initialState: { todos: Todo[] } = {
+  todos: [],
+};
 
 const todoSlice = createSlice({
-  name: "todo",
+  name: "todos",
   initialState,
   reducers: {
     addTodo: (state, action: PayloadAction<CreateTodoParams>) => {
@@ -36,10 +38,11 @@ const todoSlice = createSlice({
         createdAt: new Date().getTime(),
         updatedAt: new Date().getTime(),
       };
-      state.push(newTodo);
+      state.todos.unshift(newTodo);
     },
+
     updateTodo: (state, action: PayloadAction<UpdateTodoParams>) => {
-      state.map((todo) => {
+      const newTodo = state.todos.map((todo) => {
         if (todo.id === action.payload.id) {
           todo = {
             ...todo,
@@ -49,9 +52,12 @@ const todoSlice = createSlice({
         }
         return todo;
       });
+      state.todos = [...newTodo];
     },
+
     removeTodo: (state, action: PayloadAction<DeleteTodoParams>) => {
-      state.filter(({ id }) => id === action.payload.id);
+      const newTodo = state.todos.filter(({ id }) => id !== action.payload.id);
+      state.todos = state.todos = [...newTodo];
     },
   },
 });
