@@ -3,7 +3,7 @@ import type { TouchableOpacityProps } from "react-native";
 import React from "react";
 
 type ButtonProps = TouchableOpacityProps & {
-  type: "default" | "primary" | "secondary";
+  type?: "default" | "primary" | "secondary";
 };
 
 export const Button: React.FC<ButtonProps> = ({
@@ -14,8 +14,8 @@ export const Button: React.FC<ButtonProps> = ({
 }) => {
   return (
     <TouchableOpacity
-      activeOpacity={0.9}
-      style={[styles.buttonBase, styles[type], style]}
+      activeOpacity={0.8}
+      style={[styles.buttonBase, styles[type || "default"], style]}
       {...props}
     >
       {children}
@@ -30,7 +30,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
   },
-  default: {},
+  default: {
+    paddingHorizontal: 0,
+    paddingVertical: 0,
+  },
   primary: {},
   secondary: {},
 });

@@ -8,6 +8,7 @@ import {
   DeleteTodoParams,
   Todo,
 } from "../store";
+import { useMemo } from "react";
 
 export const useTodo = () => {
   const dispatch = useAppDispatch();
@@ -32,11 +33,25 @@ export const useTodo = () => {
     }
   };
 
+  const stats = useMemo(
+    () => ({
+      total: todos.length,
+      completed: todos.filter(({ isCompleted }) => isCompleted).length,
+    }),
+    [todos]
+  );
+
+  const todoById = (todoId: string): Todo | null => {
+    return todos.filter(({ id }) => id === todoId)[0] || null;
+  };
+
   return {
     todos,
     addTodo,
     updateTodo,
     removeTodo,
     toggleComplete,
+    stats,
+    todoById,
   };
 };

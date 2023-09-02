@@ -1,12 +1,4 @@
-import {
-  View,
-  StyleSheet,
-  Text,
-  Button,
-  Alert,
-  FlatList,
-  TouchableOpacity,
-} from "react-native";
+import { View, StyleSheet, Alert, FlatList } from "react-native";
 import { useAuthentication, useTodo } from "../../hooks";
 import { Todo } from "../../store";
 import {
@@ -14,11 +6,15 @@ import {
   ListEmpty,
   ListHeader,
   ListItemTodo,
+  TodoForm,
 } from "../../components";
+import { useState } from "react";
 
 export function TodoScreen() {
+  const [selectedTodoItem, setSelectedTodoItem] = useState<string | null>(null);
   const { lock } = useAuthentication();
-  const { todos, addTodo, removeTodo, toggleComplete } = useTodo();
+  const { todos, addTodo, removeTodo, updateTodo, toggleComplete, stats } =
+    useTodo();
 
   const handleLock = () => {
     Alert.alert("Lock app?", "Are you sure you want to lock app?", [
@@ -36,12 +32,17 @@ export function TodoScreen() {
     ]);
   };
 
-  const getRandomInt = (max: number = 100) => {
-    return Math.floor(Math.random() * max);
+  const handleAdd = (title: string) => {
+    if (title && title.trim() !== "") {
+      addTodo({ title: title.trim() });
+    }
   };
 
-  const handleAdd = () => {
-    addTodo({ title: `${getRandomInt()}` });
+  const handleUpdate = (id: string, title: string) => {
+    if (id && title && title.trim() !== "") {
+      updateTodo({ id, title });
+    }
+    setSelectedTodoItem(null);
   };
 
   const handleToggleComplete = (id: string) => {
@@ -64,16 +65,24 @@ export function TodoScreen() {
     ]);
   };
 
+  const handleSelect = (id: string) => {
+    if (selectedTodoItem !== id) {
+      setSelectedTodoItem(id);
+    } else {
+      setSelectedTodoItem(null);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <FlatList
         data={todos}
         keyExtractor={(item: Todo) => item.id}
         ListHeaderComponent={() => {
-          return <ListHeader onAdd={handleAdd} onLock={handleLock} />;
+          return <ListHeader onLock={handleLock} stats={stats} />;
         }}
         ListEmptyComponent={() => {
-          return <ListEmpty onAdd={handleAdd} />;
+          return <ListEmpty />;
         }}
         ItemSeparatorComponent={() => {
           return <ItemSeparator />;
@@ -85,10 +94,17 @@ export function TodoScreen() {
               item={item}
               onRemove={handleRemove}
               onToggleComplete={handleToggleComplete}
+              onSelect={handleSelect}
+              selectedItem={selectedTodoItem}
             />
           );
         }}
         stickyHeaderIndices={[0]}
+      />
+      <TodoForm
+        onAdd={handleAdd}
+        onUpdate={handleUpdate}
+        selectedItem={selectedTodoItem}
       />
     </View>
   );
