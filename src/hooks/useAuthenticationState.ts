@@ -5,13 +5,8 @@ export const useAuthenticationState = () => {
   const { isAuthenticated } = useAppSelector((state) => state.authentication);
   const dispatch = useAppDispatch();
 
-  const lock = () => {
-    dispatch(authenticate(false));
+  const setUnlocked = (newValue: boolean) => {
+    dispatch(authenticate(newValue));
   };
-
-  const unlock = () => {
-    dispatch(authenticate(true));
-  };
-
-  return { isAuthenticated, lock, unlock };
+  return { isAuthenticated, setUnlocked };
 };

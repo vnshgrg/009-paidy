@@ -3,10 +3,10 @@ import { useLocalAuthentication } from "./useLocalAuthentication";
 
 export const useAuth = () => {
   const { loading, isCompatible } = useLocalAuthentication();
-  const { unlock } = useAuthenticationState();
+  const { setUnlocked } = useAuthenticationState();
 
   const handleSuccess = () => {
-    unlock();
+    setUnlocked(true);
   };
 
   return { loading, isCompatible, handleSuccess };

@@ -8,7 +8,7 @@ import {
   DeleteTodoParams,
   Todo,
 } from "../store";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 export const useTodoState = () => {
   const dispatch = useAppDispatch();
@@ -27,7 +27,7 @@ export const useTodoState = () => {
   };
 
   const toggleComplete = (params: Pick<UpdateTodoParams, "id">) => {
-    const todo = todos.filter(({ id }) => id === params.id)[0];
+    const todo = todoById(params.id);
     if (todo) {
       dispatch(UpdateTodo({ ...params, isCompleted: !todo.isCompleted }));
     }
@@ -41,9 +41,12 @@ export const useTodoState = () => {
     [todos]
   );
 
-  const todoById = (todoId: string): Todo | null => {
-    return todos.filter(({ id }) => id === todoId)[0] || null;
-  };
+  const todoById = useCallback(
+    (todoId: string): Todo | null => {
+      return todos.filter(({ id }) => id === todoId)[0] || null;
+    },
+    [todos]
+  );
 
   return {
     todos,

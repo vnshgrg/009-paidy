@@ -5,7 +5,7 @@ import { useTodoState } from "./useTodoState";
 
 export const useTodo = () => {
   const [selectedTodoItem, setSelectedTodoItem] = useState<string | null>(null);
-  const { lock } = useAuthenticationState();
+  const { setUnlocked } = useAuthenticationState();
   const { todos, addTodo, removeTodo, updateTodo, toggleComplete, stats } =
     useTodoState();
 
@@ -14,7 +14,7 @@ export const useTodo = () => {
       {
         text: "Lock",
         onPress: () => {
-          lock();
+          setUnlocked(false);
         },
         style: "destructive",
       },
