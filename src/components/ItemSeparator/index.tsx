@@ -5,7 +5,7 @@ export const ItemSeparator = () => {
     <View
       style={{
         height: StyleSheet.hairlineWidth,
-        backgroundColor: "#eee",
+        backgroundColor: "#ddd",
       }}
     />
   );

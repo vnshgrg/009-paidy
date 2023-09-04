@@ -1,4 +1,10 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
 import React from "react";
 import { Todo } from "../../store";
 import { formatDate } from "../../utils";
@@ -12,6 +18,8 @@ type ListItemTodoProps = {
   onRemove: (id: string) => void;
   onSelect: (id: string) => void;
 };
+
+const WIDTH = Dimensions.get("window").width;
 
 export const ListItemTodo: React.FC<ListItemTodoProps> = ({
   item,
@@ -73,15 +81,19 @@ export const ListItemTodo: React.FC<ListItemTodoProps> = ({
           {formatDate(createdAt)}
         </Text>
       </TouchableOpacity>
-      <View>
-        <Button
-          onPress={() => {
-            onRemove(id);
-          }}
-        >
-          <Icon icon="trash" size="md" type="destructive" />
-        </Button>
-      </View>
+      <Button
+        onPress={() => {
+          onRemove(id);
+        }}
+        style={{
+          backgroundColor: "#f6f6f6",
+          paddingHorizontal: 10,
+          paddingVertical: 10,
+          borderRadius: 30,
+        }}
+      >
+        <Icon icon="trash" size="md" type="destructive" />
+      </Button>
     </View>
   );
 };
@@ -93,8 +105,8 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
   },
   itemTitleContainer: {
-    flexGrow: 1,
     marginHorizontal: 16,
+    width: WIDTH - 32 - 32 - 12 - 16 - 32,
   },
   itemTitleText: {
     fontSize: 18,

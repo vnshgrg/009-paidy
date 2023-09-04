@@ -1,7 +1,7 @@
 import { authenticate } from "../store";
 import { useAppDispatch, useAppSelector } from "./useStore";
 
-export const useAuthentication = () => {
+export const useAuthenticationState = () => {
   const { isAuthenticated } = useAppSelector((state) => state.authentication);
   const dispatch = useAppDispatch();
 

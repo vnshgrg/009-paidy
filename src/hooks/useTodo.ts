@@ -1,57 +1,80 @@
-import { useAppDispatch, useAppSelector } from "./useStore";
-import {
-  addTodo as AddTodo,
-  updateTodo as UpdateTodo,
-  removeTodo as RemoveTodo,
-  CreateTodoParams,
-  UpdateTodoParams,
-  DeleteTodoParams,
-  Todo,
-} from "../store";
-import { useMemo } from "react";
+import { useState } from "react";
+import { Alert } from "react-native";
+import { useAuthenticationState } from "./useAuthenticationState";
+import { useTodoState } from "./useTodoState";
 
 export const useTodo = () => {
-  const dispatch = useAppDispatch();
-  const { todos } = useAppSelector((state) => state.todos);
+  const [selectedTodoItem, setSelectedTodoItem] = useState<string | null>(null);
+  const { lock } = useAuthenticationState();
+  const { todos, addTodo, removeTodo, updateTodo, toggleComplete, stats } =
+    useTodoState();
 
-  const addTodo = (params: CreateTodoParams) => {
-    dispatch(AddTodo(params));
+  const handleLock = () => {
+    Alert.alert("Lock app?", "Are you sure you want to lock app?", [
+      {
+        text: "Lock",
+        onPress: () => {
+          lock();
+        },
+        style: "destructive",
+      },
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+    ]);
   };
 
-  const updateTodo = (params: UpdateTodoParams) => {
-    dispatch(UpdateTodo(params));
-  };
-
-  const removeTodo = (params: DeleteTodoParams) => {
-    dispatch(RemoveTodo(params));
-  };
-
-  const toggleComplete = (params: Pick<UpdateTodoParams, "id">) => {
-    const todo = todos.filter(({ id }) => id === params.id)[0];
-    if (todo) {
-      dispatch(UpdateTodo({ ...params, isCompleted: !todo.isCompleted }));
+  const handleAdd = (title: string) => {
+    if (title && title.trim() !== "") {
+      addTodo({ title: title.trim() });
     }
   };
 
-  const stats = useMemo(
-    () => ({
-      total: todos.length,
-      completed: todos.filter(({ isCompleted }) => isCompleted).length,
-    }),
-    [todos]
-  );
+  const handleUpdate = (id: string, title: string) => {
+    if (id && title && title.trim() !== "") {
+      updateTodo({ id, title });
+    }
+    setSelectedTodoItem(null);
+  };
 
-  const todoById = (todoId: string): Todo | null => {
-    return todos.filter(({ id }) => id === todoId)[0] || null;
+  const handleToggleComplete = (id: string) => {
+    toggleComplete({ id });
+  };
+
+  const handleRemove = (id: string) => {
+    Alert.alert("Are you sure?", "Do you want to delete this todo item?", [
+      {
+        text: "Delete",
+        onPress: () => {
+          removeTodo({ id });
+        },
+        style: "destructive",
+      },
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+    ]);
+  };
+
+  const handleSelect = (id: string | null) => {
+    if (selectedTodoItem !== id) {
+      setSelectedTodoItem(id);
+    } else {
+      setSelectedTodoItem(null);
+    }
   };
 
   return {
     todos,
-    addTodo,
-    updateTodo,
-    removeTodo,
-    toggleComplete,
     stats,
-    todoById,
+    handleAdd,
+    handleLock,
+    handleRemove,
+    handleSelect,
+    handleToggleComplete,
+    handleUpdate,
+    selectedTodoItem,
   };
 };

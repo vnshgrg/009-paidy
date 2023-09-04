@@ -1,14 +1,9 @@
 import { View, StyleSheet, Text, ActivityIndicator } from "react-native";
 import { LoginButton } from "../../components";
-import { useAuthentication, useLocalAuthentication } from "../../hooks";
+import { useAuth } from "../../hooks";
 
 export function AuthScreen() {
-  const { loading, isCompatible } = useLocalAuthentication();
-  const { unlock } = useAuthentication();
-
-  const handleSuccess = () => {
-    unlock();
-  };
+  const { loading, isCompatible, handleSuccess } = useAuth();
 
   if (loading) {
     return (

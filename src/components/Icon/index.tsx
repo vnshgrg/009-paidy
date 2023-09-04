@@ -18,10 +18,10 @@ const values = {
     xl: 48,
   },
   colors: {
-    default: "#0000ff",
-    destructive: "#ff0000",
-    cancel: "#999999",
-    positive: "#00ff00",
+    default: "#0288D1",
+    destructive: "#F4511E",
+    cancel: "#B0BEC5",
+    positive: "#4F7942",
   },
 };
 

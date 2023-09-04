@@ -5,7 +5,7 @@ type LoginButtonProps = {
   onSuccess: () => void;
 };
 
-export function LoginButton({ onSuccess }: LoginButtonProps) {
+export const LoginButton = ({ onSuccess }: LoginButtonProps) => {
   const { isBiometricsSaved, authenticate, openAppSettings } =
     useLocalAuthentication();
 
@@ -22,4 +22,4 @@ export function LoginButton({ onSuccess }: LoginButtonProps) {
       )}
     </View>
   );
-}
+};

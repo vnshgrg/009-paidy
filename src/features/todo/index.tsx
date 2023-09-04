@@ -1,5 +1,5 @@
-import { View, StyleSheet, Alert, FlatList } from "react-native";
-import { useAuthentication, useTodo } from "../../hooks";
+import { View, StyleSheet, FlatList, Keyboard } from "react-native";
+import { useTodo } from "../../hooks";
 import { Todo } from "../../store";
 import {
   ItemSeparator,
@@ -8,76 +8,37 @@ import {
   ListItemTodo,
   TodoForm,
 } from "../../components";
-import { useState } from "react";
+import { useEffect } from "react";
 
 export function TodoScreen() {
-  const [selectedTodoItem, setSelectedTodoItem] = useState<string | null>(null);
-  const { lock } = useAuthentication();
-  const { todos, addTodo, removeTodo, updateTodo, toggleComplete, stats } =
-    useTodo();
+  const {
+    todos,
+    stats,
+    handleAdd,
+    handleLock,
+    handleRemove,
+    handleSelect,
+    handleToggleComplete,
+    handleUpdate,
+    selectedTodoItem,
+  } = useTodo();
 
-  const handleLock = () => {
-    Alert.alert("Lock app?", "Are you sure you want to lock app?", [
-      {
-        text: "Lock",
-        onPress: () => {
-          lock();
-        },
-        style: "destructive",
-      },
-      {
-        text: "Cancel",
-        style: "cancel",
-      },
-    ]);
-  };
+  useEffect(() => {
+    const hideSubscription = Keyboard.addListener("keyboardWillHide", () => {
+      handleSelect(null);
+    });
 
-  const handleAdd = (title: string) => {
-    if (title && title.trim() !== "") {
-      addTodo({ title: title.trim() });
-    }
-  };
-
-  const handleUpdate = (id: string, title: string) => {
-    if (id && title && title.trim() !== "") {
-      updateTodo({ id, title });
-    }
-    setSelectedTodoItem(null);
-  };
-
-  const handleToggleComplete = (id: string) => {
-    toggleComplete({ id });
-  };
-
-  const handleRemove = (id: string) => {
-    Alert.alert("Are you sure?", "Do you want to delete this todo item?", [
-      {
-        text: "Delete",
-        onPress: () => {
-          removeTodo({ id });
-        },
-        style: "destructive",
-      },
-      {
-        text: "Cancel",
-        style: "cancel",
-      },
-    ]);
-  };
-
-  const handleSelect = (id: string) => {
-    if (selectedTodoItem !== id) {
-      setSelectedTodoItem(id);
-    } else {
-      setSelectedTodoItem(null);
-    }
-  };
+    return () => {
+      hideSubscription.remove();
+    };
+  }, []);
 
   return (
     <View style={styles.container}>
       <FlatList
         data={todos}
         keyExtractor={(item: Todo) => item.id}
+        stickyHeaderIndices={[0]}
         ListHeaderComponent={() => {
           return <ListHeader onLock={handleLock} stats={stats} />;
         }}
@@ -99,7 +60,6 @@ export function TodoScreen() {
             />
           );
         }}
-        stickyHeaderIndices={[0]}
       />
       <TodoForm
         onAdd={handleAdd}
